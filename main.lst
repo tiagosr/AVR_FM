@@ -1,0 +1,37 @@
+GAS LISTING /var/folders/hW/hWmk+mM+EdqnoN45z4O96++++TI/-Tmp-//cc2KinVw.s 			page 1
+
+
+   1               		.file	"main.c"
+   2               	__SREG__ = 0x3f
+   3               	__SP_H__ = 0x3e
+   4               	__SP_L__ = 0x3d
+   5               	__CCP__  = 0x34
+   6               	__tmp_reg__ = 0
+   7               	__zero_reg__ = 1
+   8               		.text
+   9               	.global	main
+  10               		.type	main, @function
+  11               	main:
+  12               	/* prologue: function */
+  13               	/* frame size = 0 */
+  14 0000 00D0      		rcall FMSynth_Sample
+  15 0002 80E0      		ldi r24,lo8(0)
+  16 0004 90E0      		ldi r25,hi8(0)
+  17               	/* epilogue start */
+  18 0006 0895      		ret
+  19               		.size	main, .-main
+GAS LISTING /var/folders/hW/hWmk+mM+EdqnoN45z4O96++++TI/-Tmp-//cc2KinVw.s 			page 2
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 main.c
+/var/folders/hW/hWmk+mM+EdqnoN45z4O96++++TI/-Tmp-//cc2KinVw.s:2      *ABS*:0000003f __SREG__
+/var/folders/hW/hWmk+mM+EdqnoN45z4O96++++TI/-Tmp-//cc2KinVw.s:3      *ABS*:0000003e __SP_H__
+/var/folders/hW/hWmk+mM+EdqnoN45z4O96++++TI/-Tmp-//cc2KinVw.s:4      *ABS*:0000003d __SP_L__
+/var/folders/hW/hWmk+mM+EdqnoN45z4O96++++TI/-Tmp-//cc2KinVw.s:5      *ABS*:00000034 __CCP__
+/var/folders/hW/hWmk+mM+EdqnoN45z4O96++++TI/-Tmp-//cc2KinVw.s:6      *ABS*:00000000 __tmp_reg__
+/var/folders/hW/hWmk+mM+EdqnoN45z4O96++++TI/-Tmp-//cc2KinVw.s:7      *ABS*:00000001 __zero_reg__
+/var/folders/hW/hWmk+mM+EdqnoN45z4O96++++TI/-Tmp-//cc2KinVw.s:11     .text:00000000 main
+
+UNDEFINED SYMBOLS
+FMSynth_Sample
