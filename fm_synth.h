@@ -14,7 +14,8 @@
 #define FM_OPERATOR_COUNT 4
 #define FM_CHANNEL_COUNT 6
 
-#define FM_SAMPLE_RATE 44100
+/* Sample rate is 8Mhz/256 */
+#define FM_SAMPLE_RATE 31250
 
 #define FM_OUTPUT_PWM
 #define FM_OUTPUT_LEFT	PB0
@@ -43,7 +44,7 @@ typedef struct FMEnvelope {
 	int8_t sustain_level;		// 1
 	int8_t sustain_decay_rate;	// 1
 	int8_t release_rate;		// 1
-	
+
 	uint8_t rate_change;		// 1
 	int8_t stage;				// 1
 	int8_t level;				// 1
@@ -54,8 +55,7 @@ int8_t FMEnvelope_Sample(FMEnvelope *env, uint16_t frequency, uint8_t note_on);
 typedef struct FMOperator {
 	FMOscillator oscillator;	// 2
 	FMEnvelope envelope;		// 8
-	int8_t detune;				// 1
-	int8_t multiplier;			// 1
+	int8_t detune_multiplier;	// 1
 	int8_t index;				// 1
 	int8_t offset_influence;	// 1
 	int16_t phase;				// 2

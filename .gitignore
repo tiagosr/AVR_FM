@@ -12,3 +12,5 @@ avr_fm.out
 fm_synth.lst
 
 fm_synth.o
+bin/
+obj/

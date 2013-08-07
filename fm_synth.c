@@ -8,6 +8,7 @@
  */
 
 #include "fm_synth.h"
+#include <avr/pgmspace.h>
 
 FMChannel fm_channels[FM_CHANNEL_COUNT];
 FMSample fm_current_sample;
@@ -23,7 +24,7 @@ for x in xrange(256):
 print sin_table
 
  */
-static const int8_t sin_table[256] = {
+static const int8_t sin_table[256] PROGMEM = {
 	0, 2, 5, 8, 12, 15, 18, 21,
 	24, 27, 30, 33, 36, 39, 42, 45,
 	48, 51, 54, 57, 59, 62, 65, 67,
@@ -64,7 +65,7 @@ int8_t FMOscillator_Sample(FMOscillator *osc, uint16_t phase)
 		case FMWave_Disabled:
 			return 0;
 		case FMWave_Sine:
-			return sin_table[(phase&0xff00)>>8];
+			return pgm_read_byte(&(sin_table[(phase&0xff00)>>8]));
 		case FMWave_Square:
 			return (phase&0x8000)?-0x80:0x7f;
 		case FMWave_Triangle:
@@ -118,7 +119,7 @@ int8_t FMEnvelope_Sample(FMEnvelope *env, uint16_t frequency, uint8_t note_on)
 			}
 			break;
 	}
-	return env->level;	
+	return env->level;
 }
 
 void FMEnvelope_Reset(FMEnvelope *env)
@@ -133,12 +134,12 @@ void FMOperator_Reset(FMOperator *op)
 }
 void FMOperator_Sample(FMOperator *op, int8_t octave, uint8_t note, uint8_t note_on, int8_t offset)
 {
-	uint16_t frequency = ((note+op->detune)*(1<<octave));
-	op->phase += frequency;
-	
+	uint16_t frequency = ((note+(op->detune_multiplier>>4))*(1<<octave));
+	op->phase += frequency * (op->detune_multiplier & 0xf);
+
 	uint16_t phase2 = op->phase+((op->offset_influence*offset)>>8);
-	
-	op->value = (((FMEnvelope_Sample(&op->envelope, frequency, note_on) * 
+
+	op->value = (((FMEnvelope_Sample(&op->envelope, frequency, note_on) *
 				   FMOscillator_Sample(&op->oscillator, phase2)) >> 8) *
 				 op->index) >> 8;
 }
@@ -148,8 +149,10 @@ void FMOperator_Sample(FMOperator *op, int8_t octave, uint8_t note, uint8_t note
 typedef struct fm_algorithm_config {
 	uint8_t stage_map[FM_OPERATOR_COUNT+1];
 } fm_algorithm_config;
+
+
 #define algo_slot(a, b, c, d) (((a)<<3)|((b)<<2)|((c)<<1)|(d))
-static const fm_algorithm_config algorithm_configs[] = {
+static const fm_algorithm_config algorithm_configs[] PROGMEM = {
 	{
 		{	/*
 			 * algorithm 0:
@@ -172,26 +175,7 @@ static const fm_algorithm_config algorithm_configs[] = {
 			algo_slot(0,0,0,1)		// s3 => out
 		}
 	}, {
-		{	/*
-			 * algorithm 0:
-			 *
-			 * s0 <- old s0
-			 * |
-			 * s1
-			 * |
-			 * s2 + s3
-			 *    |
-			 *   out
-			 *
-			 */
-			algo_slot(1,0,0,0),	// s0 feedback => s0
-			algo_slot(1,0,0,0),	// s0 => s1
-			algo_slot(0,1,0,0),	// s1 => s2
-			algo_slot(0,0,0,0),	// xx => s3
-			algo_slot(0,0,1,1)	// s2 + s3 => out
-		}
-	}, {
-		{	/*
+	    {	/*
 			 * algorithm 1:
 			 *
 			 * s0 <- old s0
@@ -327,20 +311,20 @@ static const fm_algorithm_config algorithm_configs[] = {
 };
 
 FMSample FMChannel_Sample(FMChannel *channel) {
-	
+
 	uint8_t vol_left = (127-channel->panning);
 	uint8_t vol_right = (127+channel->panning);
 	if (vol_right>127) vol_right = 127;
 	if (vol_left>127) vol_left = 127;
 	int8_t accum;
-	
+
 	uint8_t i = 0;
 	uint8_t j;
 	for (; i<FM_OPERATOR_COUNT; i++) {
 		j = 0;
 		accum = 0;
 		for (; j<FM_OPERATOR_COUNT; j++) {
-			uint8_t flag = ((algorithm_configs[channel->algorithm].stage_map[i])&(1<<j));
+			uint8_t flag = (pgm_read_byte(&(algorithm_configs[channel->algorithm].stage_map[i]))&(1<<j));
 			accum += flag?(channel->operators[j].value):0;
 		}
 		FMOperator_Sample(&(channel->operators[i]), channel->octave, channel->note, channel->note_on, accum);
