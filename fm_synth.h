@@ -40,7 +40,7 @@ int8_t FMOscillator_Sample(FMOscillator *osc, uint16_t phase);
 typedef struct FMEnvelope {
 	int8_t attack_rate;			// 1
 	int8_t total_level;			// 1
-	int8_t decay_rate;			// 1
+	int8_t am_decay_rate;			// 1
 	int8_t sustain_level;		// 1
 	int8_t sustain_decay_rate;	// 1
 	int8_t release_rate;		// 1
@@ -60,19 +60,18 @@ typedef struct FMOperator {
 	int8_t offset_influence;	// 1
 	int16_t phase;				// 2
 	int8_t value;				// 1
-} FMOperator;					// = 17
+} FMOperator;					// = 16
 
 void FMOperator_Reset(FMOperator *op);
 void FMOperator_Sample(FMOperator *op, int8_t octave, uint8_t note, uint8_t note_on, int8_t offset);
 
 typedef struct FM_Channel {
-	FMOperator operators[FM_OPERATOR_COUNT];	// 17*4 = 68
-	int8_t algorithm;			// 1
-	int8_t octave;				// 1
+	FMOperator operators[FM_OPERATOR_COUNT];	// 16*4 = 64
+	int8_t algorithm_octave;	// 1
 	uint8_t note;				// 1 // test if enough resolution. another solution might be a lookup table with values of 2^(x/12)
 	uint8_t note_on;			// 1
 	int8_t panning;				// 1
-} FMChannel;					// = 73
+} FMChannel;					// = 68
 
 typedef struct FMSample {
 	int8_t left, right;

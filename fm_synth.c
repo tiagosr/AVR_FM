@@ -84,9 +84,10 @@ int8_t FMEnvelope_Sample(FMEnvelope *env, uint16_t frequency, uint8_t note_on)
 		case 0: // stopped
 			if (note_on) {
 				env->stage = 1; // set to attack
-				return FMEnvelope_Sample(env, frequency, note_on); // call again with attack set
+				// fall through to attack phase
+			} else {
+                break;
 			}
-			break;
 		case 1: // attack
 			env->level += env->level + env->attack_rate + ((freq_rate_change *env->attack_rate)>>8);
 			if (env->level >= ((env->total_level * note_on)>>8)) { // reached total level
@@ -324,15 +325,15 @@ FMSample FMChannel_Sample(FMChannel *channel) {
 		j = 0;
 		accum = 0;
 		for (; j<FM_OPERATOR_COUNT; j++) {
-			uint8_t flag = (pgm_read_byte(&(algorithm_configs[channel->algorithm].stage_map[i]))&(1<<j));
-			accum += flag?(channel->operators[j].value):0;
+			uint8_t flag = (pgm_read_byte(&(algorithm_configs[channel->algorithm_octave >> 4].stage_map[i]))&(1<<j));
+			if (flag) accum += channel->operators[j].value;
 		}
-		FMOperator_Sample(&(channel->operators[i]), channel->octave, channel->note, channel->note_on, accum);
+		FMOperator_Sample(&(channel->operators[i]), channel->algorithm_octave & 0xf, channel->note, channel->note_on, accum);
 	}
 	accum = 0;
 	for (j=0; j<FM_OPERATOR_COUNT; j++) {
-		uint8_t flag = ((algorithm_configs[channel->algorithm].stage_map[i])&(1<<j));
-		accum += flag?(channel->operators[j].value):0;
+		uint8_t flag = (pgm_read_byte(&(algorithm_configs[channel->algorithm_octave >> 4].stage_map[i]))&(1<<j));
+        if (flag) accum += channel->operators[j].value;
 	}
 	FMSample sample = {accum*vol_left,accum*vol_right};
 	return sample;
