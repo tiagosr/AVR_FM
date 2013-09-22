@@ -38,16 +38,13 @@ typedef struct FMOscillator {
 int8_t FMOscillator_Sample(FMOscillator *osc, uint16_t phase);
 
 typedef struct FMEnvelope {
-	int8_t attack_rate;			// 1
-	int8_t total_level;			// 1
-	int8_t am_decay_rate;			// 1
-	int8_t sustain_level;		// 1
-	int8_t sustain_decay_rate;	// 1
-	int8_t release_rate;		// 1
-
-	uint8_t rate_change;		// 1
-	int8_t stage;				// 1
-	int8_t level;				// 1
+	uint8_t rate_scaling__attack_rate;			// 1
+	uint8_t level;                  // 1
+	uint8_t total_level;			// 1
+	uint8_t am__decay_rate;			// 1
+	uint8_t sustain_level__release_rate;		// 1
+	uint8_t sustain_decay_rate;	// 1
+	uint8_t stage;				// 1
 } FMEnvelope;	// = 8
 
 int8_t FMEnvelope_Sample(FMEnvelope *env, uint16_t frequency, uint8_t note_on);

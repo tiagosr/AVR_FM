@@ -12,9 +12,9 @@
 #include "fm_synth.h"
 
 ISR(TIMER1_OVF_vect) {
-    FMSynth_Sample();
     OCR1A = fm_current_sample.left;
     OCR2A = fm_current_sample.right;
+    FMSynth_Sample(); // sample after so it doesn't suffer aliasing problems
 }
 
 int main(void)

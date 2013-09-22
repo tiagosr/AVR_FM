@@ -79,7 +79,11 @@ int8_t FMOscillator_Sample(FMOscillator *osc, uint16_t phase)
 
 int8_t FMEnvelope_Sample(FMEnvelope *env, uint16_t frequency, uint8_t note_on)
 {
-	uint16_t freq_rate_change = (frequency*env->rate_change)>>8;
+    uint8_t rate_scaling_factor = 4-(env->rate_scaling__attack_rate >> 5);
+    uint8_t sustain_level = (env->sustain_level__release_rate & 0xf0);
+    sustain_level += sustain_level>>4;
+
+    uint16_t rate_scaling = (frequency&0x7a0)>>rate_scaling_factor;
 	switch (env->stage) {
 		case 0: // stopped
 			if (note_on) {
@@ -89,29 +93,41 @@ int8_t FMEnvelope_Sample(FMEnvelope *env, uint16_t frequency, uint8_t note_on)
                 break;
 			}
 		case 1: // attack
-			env->level += env->level + env->attack_rate + ((freq_rate_change *env->attack_rate)>>8);
-			if (env->level >= ((env->total_level * note_on)>>8)) { // reached total level
-				env->level = (env->total_level * note_on)>>8;
-				env->stage = 2; // set to decay
-			}
+		    {
+		        uint8_t attack_rate = ((env->rate_scaling__attack_rate &0x1f)+1) << 3;
+                env->level += attack_rate + attack_rate*rate_scaling;
+                if (env->level >= ((env->total_level * note_on)>>8)) { // reached total level
+                    env->level = (env->total_level * note_on)>>8;
+                    env->stage = 2; // set to decay
+                }
+		    }
 			break;
 		case 2: // decay
-			env->level -= env->decay_rate + ((freq_rate_change * env->decay_rate)>>8);
-			if (env->level <= ((env->sustain_level * note_on)>>8)) { // note reached sustain level
-				env->level = (env->sustain_level *note_on) >> 8;
-				env->stage = 3; // set to sustain
+		    {
+		        uint8_t decay_rate = (env->am__decay_rate & 0x1f) << 3;
+		        uint8_t sustain_level = (env->sustain_level__release_rate &0xf0);
+		        sustain_level += sustain_level >> 4;
+                env->level -= decay_rate + ((decay_rate * rate_scaling)>>8);
+                if (env->level <= ((sustain_level * note_on)>>8)) { // note reached sustain level
+                    env->level = (sustain_level * note_on) >> 8;
+                    env->stage = 3; // set to sustain
+                }
 			}
 			break;
 		case 3: // sustain & release
-			if (note_on) { // sustain while note is not released
-				env->level -= env->sustain_decay_rate + ((freq_rate_change * env->sustain_decay_rate)>>8);
-			} else {
-				env->level -= env->release_rate + ((freq_rate_change * env->release_rate)>>8);
-			}
-			if (env->level <= 0) { // end envelope
-				env->level = 0; // zero level
-				env->stage = 4; // set stage to debounce
-			}
+		    {
+		        if (note_on) { // sustain while note is not released
+                    env->level -= env->sustain_decay_rate + ((rate_scaling * env->sustain_decay_rate)>>8);
+                } else {
+                    uint8_t release_rate = (env->sustain_level__release_rate & 0xf);
+                    release_rate += release_rate << 4;
+		            env->level -= release_rate + ((rate_scaling * release_rate)>>8);
+                }
+                if (env->level <= 0) { // end envelope
+                    env->level = 0; // zero level
+                    env->stage = 4; // set stage to debounce
+                }
+		    }
 			break;
 		case 4: // debounce
 		default:
@@ -135,12 +151,13 @@ void FMOperator_Reset(FMOperator *op)
 }
 void FMOperator_Sample(FMOperator *op, int8_t octave, uint8_t note, uint8_t note_on, int8_t offset)
 {
-	uint16_t frequency = ((note+(op->detune_multiplier>>4))*(1<<octave));
-	op->phase += frequency * (op->detune_multiplier & 0xf);
+    uint8_t envelope_sample = FMEnvelope_Sample(&op->envelope, octave<<8 | note, note_on);
+    uint16_t frequency = ((note+(op->detune_multiplier>>4))*(1<<octave));
+	op->phase += frequency * ((op->detune_multiplier & 0xf) + 1);
 
 	uint16_t phase2 = op->phase+((op->offset_influence*offset)>>8);
 
-	op->value = (((FMEnvelope_Sample(&op->envelope, frequency, note_on) *
+	op->value = (((envelope_sample *
 				   FMOscillator_Sample(&op->oscillator, phase2)) >> 8) *
 				 op->index) >> 8;
 }
