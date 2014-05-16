@@ -1,0 +1,633 @@
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 1
+
+
+   1               		.file	"fm_command.c"
+   2               	__SP_H__ = 0x3e
+   3               	__SP_L__ = 0x3d
+   4               	__SREG__ = 0x3f
+   5               	__tmp_reg__ = 0
+   6               	__zero_reg__ = 1
+   7               		.text
+   8               	.global	FMCommandReceive
+   9               		.type	FMCommandReceive, @function
+  10               	FMCommandReceive:
+  11 0000 CF93      		push r28
+  12 0002 DF93      		push r29
+  13               	/* prologue: function */
+  14               	/* frame size = 0 */
+  15               	/* stack size = 2 */
+  16               	.L__stack_usage = 2
+  17 0004 2091 0000 		lds r18,scrLine.1728
+  18 0008 3091 0000 		lds r19,scrLine.1728+1
+  19 000c 2436      		cpi r18,100
+  20 000e 3105      		cpc r19,__zero_reg__
+  21 0010 01F4      		brne .+2
+  22 0012 00C0      		rjmp .L3
+  23 0014 04F4      		brge .L4
+  24 0016 2A35      		cpi r18,90
+  25 0018 3105      		cpc r19,__zero_reg__
+  26 001a 01F4      		brne .+2
+  27 001c 00C0      		rjmp .L5
+  28 001e 04F4      		brge .L6
+  29 0020 2115      		cp r18,__zero_reg__
+  30 0022 3105      		cpc r19,__zero_reg__
+  31 0024 01F0      		breq .L7
+  32 0026 2735      		cpi r18,87
+  33 0028 3105      		cpc r19,__zero_reg__
+  34 002a 01F0      		breq .L8
+  35 002c 00C0      		rjmp .L24
+  36               	.L6:
+  37 002e 2D35      		cpi r18,93
+  38 0030 3105      		cpc r19,__zero_reg__
+  39 0032 01F4      		brne .+2
+  40 0034 00C0      		rjmp .L9
+  41 0036 2236      		cpi r18,98
+  42 0038 3105      		cpc r19,__zero_reg__
+  43 003a 01F0      		breq .+2
+  44 003c 00C0      		rjmp .L24
+  45 003e 8093 0000 		sts octave.1730,r24
+  46 0042 84E6      		ldi r24,lo8(100)
+  47 0044 90E0      		ldi r25,0
+  48 0046 00C0      		rjmp .L38
+  49               	.L4:
+  50 0048 2E36      		cpi r18,110
+  51 004a 3105      		cpc r19,__zero_reg__
+  52 004c 01F4      		brne .+2
+  53 004e 00C0      		rjmp .L11
+  54 0050 04F4      		brge .L12
+  55 0052 2A36      		cpi r18,106
+  56 0054 3105      		cpc r19,__zero_reg__
+  57 0056 01F0      		breq .L7
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 2
+
+
+  58 0058 2C36      		cpi r18,108
+  59 005a 3105      		cpc r19,__zero_reg__
+  60 005c 01F0      		breq .+2
+  61 005e 00C0      		rjmp .L24
+  62 0060 8093 0000 		sts octave.1730,r24
+  63 0064 8EE6      		ldi r24,lo8(110)
+  64 0066 90E0      		ldi r25,0
+  65 0068 00C0      		rjmp .L38
+  66               	.L12:
+  67 006a 2837      		cpi r18,120
+  68 006c 3105      		cpc r19,__zero_reg__
+  69 006e 01F0      		breq .L7
+  70 0070 2A37      		cpi r18,122
+  71 0072 3105      		cpc r19,__zero_reg__
+  72 0074 01F0      		breq .L7
+  73 0076 2437      		cpi r18,116
+  74 0078 3105      		cpc r19,__zero_reg__
+  75 007a 01F0      		breq .+2
+  76 007c 00C0      		rjmp .L24
+  77 007e 9091 0000 		lds r25,current_byte.1732
+  78 0082 E92F      		mov r30,r25
+  79 0084 F0E0      		ldi r31,0
+  80 0086 E050      		subi r30,lo8(-(fm_channels))
+  81 0088 F040      		sbci r31,hi8(-(fm_channels))
+  82 008a 8083      		st Z,r24
+  83 008c 9F5F      		subi r25,lo8(-(1))
+  84 008e 9093 0000 		sts current_byte.1732,r25
+  85 0092 8091 0000 		lds r24,bytes_remaining.1731
+  86 0096 8150      		subi r24,lo8(-(-1))
+  87 0098 00C0      		rjmp .L37
+  88               	.L8:
+  89 009a 8630      		cpi r24,lo8(6)
+  90 009c 00F4      		brsh .L16
+  91 009e 8093 0000 		sts channel_num,r24
+  92               	.L7:
+  93 00a2 8130      		cpi r24,lo8(1)
+  94 00a4 01F4      		brne .L15
+  95 00a6 87E5      		ldi r24,lo8(87)
+  96 00a8 90E0      		ldi r25,0
+  97 00aa 00C0      		rjmp .L38
+  98               	.L15:
+  99 00ac 8230      		cpi r24,lo8(2)
+ 100 00ae 01F4      		brne .L16
+ 101 00b0 8AE5      		ldi r24,lo8(90)
+ 102 00b2 90E0      		ldi r25,0
+ 103               	.L38:
+ 104 00b4 9093 0000 		sts scrLine.1728+1,r25
+ 105 00b8 8093 0000 		sts scrLine.1728,r24
+ 106 00bc 81E0      		ldi r24,lo8(1)
+ 107 00be 00C0      		rjmp .L2
+ 108               	.L5:
+ 109 00c0 8430      		cpi r24,lo8(4)
+ 110 00c2 00F4      		brsh .L16
+ 111 00c4 8093 0000 		sts op_num,r24
+ 112 00c8 00C0      		rjmp .L7
+ 113               	.L16:
+ 114 00ca 8731      		cpi r24,lo8(23)
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 3
+
+
+ 115 00cc 01F4      		brne .L17
+ 116 00ce 8DE5      		ldi r24,lo8(93)
+ 117 00d0 90E0      		ldi r25,0
+ 118 00d2 00C0      		rjmp .L38
+ 119               	.L9:
+ 120 00d4 A091 0000 		lds r26,channel_num
+ 121 00d8 B0E0      		ldi r27,0
+ 122 00da 282F      		mov r18,r24
+ 123 00dc 2695      		lsr r18
+ 124 00de 30E0      		ldi r19,0
+ 125 00e0 F901      		movw r30,r18
+ 126 00e2 E050      		subi r30,lo8(-(midi_notes))
+ 127 00e4 F040      		sbci r31,hi8(-(midi_notes))
+ 128               	/* #APP */
+ 129               	 ;  94 "fm_command.c" 1
+ 130 00e6 E491      		lpm r30, Z
+ 131               		
+ 132               	 ;  0 "" 2
+ 133               	/* #NOAPP */
+ 134 00e8 ED01      		movw r28,r26
+ 135 00ea 96E0      		ldi r25,6
+ 136               		1:
+ 137 00ec CC0F      		lsl r28
+ 138 00ee DD1F      		rol r29
+ 139 00f0 9A95      		dec r25
+ 140 00f2 01F4      		brne 1b
+ 141 00f4 C050      		subi r28,lo8(-(fm_channels+63))
+ 142 00f6 D040      		sbci r29,hi8(-(fm_channels+63))
+ 143 00f8 E883      		st Y,r30
+ 144 00fa F901      		movw r30,r18
+ 145 00fc E050      		subi r30,lo8(-(midi_octaves))
+ 146 00fe F040      		sbci r31,hi8(-(midi_octaves))
+ 147               	/* #APP */
+ 148               	 ;  95 "fm_command.c" 1
+ 149 0100 2491      		lpm r18, Z
+ 150               		
+ 151               	 ;  0 "" 2
+ 152               	/* #NOAPP */
+ 153 0102 36E0      		ldi r19,6
+ 154               		1:
+ 155 0104 AA0F      		lsl r26
+ 156 0106 BB1F      		rol r27
+ 157 0108 3A95      		dec r19
+ 158 010a 01F4      		brne 1b
+ 159 010c A050      		subi r26,lo8(-(fm_channels+60))
+ 160 010e B040      		sbci r27,hi8(-(fm_channels+60))
+ 161 0110 422F      		mov r20,r18
+ 162 0112 4295      		swap r20
+ 163 0114 407F      		andi r20,lo8(-16)
+ 164 0116 9C91      		ld r25,X
+ 165 0118 9F70      		andi r25,lo8(15)
+ 166 011a 2295      		swap r18
+ 167 011c 2770      		andi r18,lo8(7)
+ 168 011e 1196      		adiw r26,1
+ 169 0120 3C91      		ld r19,X
+ 170 0122 1197      		sbiw r26,1
+ 171 0124 387F      		andi r19,lo8(-8)
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 4
+
+
+ 172 0126 322B      		or r19,r18
+ 173 0128 1196      		adiw r26,1
+ 174 012a 3C93      		st X,r19
+ 175 012c 1197      		sbiw r26,1
+ 176 012e 942B      		or r25,r20
+ 177 0130 9160      		ori r25,lo8(1<<0)
+ 178 0132 9C93      		st X,r25
+ 179 0134 00C0      		rjmp .L7
+ 180               	.L17:
+ 181 0136 8430      		cpi r24,lo8(4)
+ 182 0138 01F4      		brne .L18
+ 183 013a 82E6      		ldi r24,lo8(98)
+ 184 013c 90E0      		ldi r25,0
+ 185 013e 00C0      		rjmp .L39
+ 186               	.L3:
+ 187 0140 2091 0000 		lds r18,channel_num
+ 188 0144 90E4      		ldi r25,lo8(64)
+ 189 0146 299F      		mul r18,r25
+ 190 0148 9001      		movw r18,r0
+ 191 014a 1124      		clr __zero_reg__
+ 192 014c F901      		movw r30,r18
+ 193 014e E050      		subi r30,lo8(-(fm_channels+60))
+ 194 0150 F040      		sbci r31,hi8(-(fm_channels+60))
+ 195 0152 5091 0000 		lds r21,octave.1730
+ 196 0156 652F      		mov r22,r21
+ 197 0158 6295      		swap r22
+ 198 015a 607F      		andi r22,lo8(-16)
+ 199 015c 9081      		ld r25,Z
+ 200 015e 9F70      		andi r25,lo8(15)
+ 201 0160 5295      		swap r21
+ 202 0162 5770      		andi r21,lo8(7)
+ 203 0164 4181      		ldd r20,Z+1
+ 204 0166 487F      		andi r20,lo8(-8)
+ 205 0168 452B      		or r20,r21
+ 206 016a 4183      		std Z+1,r20
+ 207 016c D901      		movw r26,r18
+ 208 016e A050      		subi r26,lo8(-(fm_channels+63))
+ 209 0170 B040      		sbci r27,hi8(-(fm_channels+63))
+ 210 0172 8C93      		st X,r24
+ 211 0174 962B      		or r25,r22
+ 212 0176 9160      		ori r25,lo8(1<<0)
+ 213 0178 9083      		st Z,r25
+ 214 017a 00C0      		rjmp .L7
+ 215               	.L18:
+ 216 017c 8530      		cpi r24,lo8(5)
+ 217 017e 01F4      		brne .L19
+ 218 0180 E091 0000 		lds r30,channel_num
+ 219 0184 80E4      		ldi r24,lo8(64)
+ 220 0186 E89F      		mul r30,r24
+ 221 0188 F001      		movw r30,r0
+ 222 018a 1124      		clr __zero_reg__
+ 223 018c E050      		subi r30,lo8(-(fm_channels+60))
+ 224 018e F040      		sbci r31,hi8(-(fm_channels+60))
+ 225 0190 8081      		ld r24,Z
+ 226 0192 8E7F      		andi r24,lo8(~(1<<0))
+ 227 0194 8083      		st Z,r24
+ 228 0196 8AE6      		ldi r24,lo8(106)
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 5
+
+
+ 229 0198 90E0      		ldi r25,0
+ 230 019a 00C0      		rjmp .L40
+ 231               	.L19:
+ 232 019c 8330      		cpi r24,lo8(3)
+ 233 019e 01F4      		brne .L20
+ 234 01a0 8CE6      		ldi r24,lo8(108)
+ 235 01a2 90E0      		ldi r25,0
+ 236               	.L39:
+ 237 01a4 9093 0000 		sts scrLine.1728+1,r25
+ 238 01a8 8093 0000 		sts scrLine.1728,r24
+ 239 01ac 82E0      		ldi r24,lo8(2)
+ 240 01ae 00C0      		rjmp .L2
+ 241               	.L11:
+ 242 01b0 2091 0000 		lds r18,channel_num
+ 243 01b4 90E4      		ldi r25,lo8(64)
+ 244 01b6 299F      		mul r18,r25
+ 245 01b8 9001      		movw r18,r0
+ 246 01ba 1124      		clr __zero_reg__
+ 247 01bc F901      		movw r30,r18
+ 248 01be E050      		subi r30,lo8(-(fm_channels+60))
+ 249 01c0 F040      		sbci r31,hi8(-(fm_channels+60))
+ 250 01c2 4091 0000 		lds r20,octave.1730
+ 251 01c6 542F      		mov r21,r20
+ 252 01c8 5295      		swap r21
+ 253 01ca 507F      		andi r21,lo8(-16)
+ 254 01cc 9081      		ld r25,Z
+ 255 01ce 9F70      		andi r25,lo8(15)
+ 256 01d0 952B      		or r25,r21
+ 257 01d2 9083      		st Z,r25
+ 258 01d4 4295      		swap r20
+ 259 01d6 4770      		andi r20,lo8(7)
+ 260 01d8 9181      		ldd r25,Z+1
+ 261 01da 987F      		andi r25,lo8(-8)
+ 262 01dc 942B      		or r25,r20
+ 263 01de 9183      		std Z+1,r25
+ 264 01e0 F901      		movw r30,r18
+ 265 01e2 E050      		subi r30,lo8(-(fm_channels+63))
+ 266 01e4 F040      		sbci r31,hi8(-(fm_channels+63))
+ 267 01e6 8083      		st Z,r24
+ 268 01e8 00C0      		rjmp .L7
+ 269               	.L20:
+ 270 01ea 8630      		cpi r24,lo8(6)
+ 271 01ec 01F4      		brne .L21
+ 272 01ee 80E4      		ldi r24,lo8(64)
+ 273               	.L37:
+ 274 01f0 8093 0000 		sts bytes_remaining.1731,r24
+ 275 01f4 8091 0000 		lds r24,bytes_remaining.1731
+ 276 01f8 8823      		tst r24
+ 277 01fa 01F0      		breq .L42
+ 278 01fc 24E7      		ldi r18,lo8(116)
+ 279 01fe 30E0      		ldi r19,0
+ 280 0200 3093 0000 		sts scrLine.1728+1,r19
+ 281 0204 2093 0000 		sts scrLine.1728,r18
+ 282 0208 00C0      		rjmp .L2
+ 283               	.L42:
+ 284 020a 88E7      		ldi r24,lo8(120)
+ 285 020c 90E0      		ldi r25,0
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 6
+
+
+ 286 020e 00C0      		rjmp .L40
+ 287               	.L21:
+ 288 0210 8AE7      		ldi r24,lo8(122)
+ 289 0212 90E0      		ldi r25,0
+ 290               	.L40:
+ 291 0214 9093 0000 		sts scrLine.1728+1,r25
+ 292 0218 8093 0000 		sts scrLine.1728,r24
+ 293               	.L24:
+ 294 021c 80E0      		ldi r24,0
+ 295               	.L2:
+ 296               	/* epilogue start */
+ 297 021e DF91      		pop r29
+ 298 0220 CF91      		pop r28
+ 299 0222 0895      		ret
+ 300               		.size	FMCommandReceive, .-FMCommandReceive
+ 301               		.local	current_byte.1732
+ 302               		.comm	current_byte.1732,1,1
+ 303               		.local	bytes_remaining.1731
+ 304               		.comm	bytes_remaining.1731,1,1
+ 305               		.local	octave.1730
+ 306               		.comm	octave.1730,1,1
+ 307               		.local	scrLine.1728
+ 308               		.comm	scrLine.1728,2,1
+ 309               		.section	.progmem.data,"a",@progbits
+ 310               		.type	midi_octaves, @object
+ 311               		.size	midi_octaves, 128
+ 312               	midi_octaves:
+ 313 0000 00        		.byte	0
+ 314 0001 00        		.byte	0
+ 315 0002 00        		.byte	0
+ 316 0003 00        		.byte	0
+ 317 0004 00        		.byte	0
+ 318 0005 00        		.byte	0
+ 319 0006 00        		.byte	0
+ 320 0007 00        		.byte	0
+ 321 0008 00        		.byte	0
+ 322 0009 00        		.byte	0
+ 323 000a 00        		.byte	0
+ 324 000b 00        		.byte	0
+ 325 000c 01        		.byte	1
+ 326 000d 01        		.byte	1
+ 327 000e 01        		.byte	1
+ 328 000f 01        		.byte	1
+ 329 0010 01        		.byte	1
+ 330 0011 01        		.byte	1
+ 331 0012 01        		.byte	1
+ 332 0013 01        		.byte	1
+ 333 0014 01        		.byte	1
+ 334 0015 01        		.byte	1
+ 335 0016 01        		.byte	1
+ 336 0017 01        		.byte	1
+ 337 0018 02        		.byte	2
+ 338 0019 02        		.byte	2
+ 339 001a 02        		.byte	2
+ 340 001b 02        		.byte	2
+ 341 001c 02        		.byte	2
+ 342 001d 02        		.byte	2
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 7
+
+
+ 343 001e 02        		.byte	2
+ 344 001f 02        		.byte	2
+ 345 0020 02        		.byte	2
+ 346 0021 02        		.byte	2
+ 347 0022 02        		.byte	2
+ 348 0023 02        		.byte	2
+ 349 0024 03        		.byte	3
+ 350 0025 03        		.byte	3
+ 351 0026 03        		.byte	3
+ 352 0027 03        		.byte	3
+ 353 0028 03        		.byte	3
+ 354 0029 03        		.byte	3
+ 355 002a 03        		.byte	3
+ 356 002b 03        		.byte	3
+ 357 002c 03        		.byte	3
+ 358 002d 03        		.byte	3
+ 359 002e 03        		.byte	3
+ 360 002f 03        		.byte	3
+ 361 0030 04        		.byte	4
+ 362 0031 04        		.byte	4
+ 363 0032 04        		.byte	4
+ 364 0033 04        		.byte	4
+ 365 0034 04        		.byte	4
+ 366 0035 04        		.byte	4
+ 367 0036 04        		.byte	4
+ 368 0037 04        		.byte	4
+ 369 0038 04        		.byte	4
+ 370 0039 04        		.byte	4
+ 371 003a 04        		.byte	4
+ 372 003b 04        		.byte	4
+ 373 003c 05        		.byte	5
+ 374 003d 05        		.byte	5
+ 375 003e 05        		.byte	5
+ 376 003f 05        		.byte	5
+ 377 0040 05        		.byte	5
+ 378 0041 05        		.byte	5
+ 379 0042 05        		.byte	5
+ 380 0043 05        		.byte	5
+ 381 0044 05        		.byte	5
+ 382 0045 05        		.byte	5
+ 383 0046 05        		.byte	5
+ 384 0047 05        		.byte	5
+ 385 0048 06        		.byte	6
+ 386 0049 06        		.byte	6
+ 387 004a 06        		.byte	6
+ 388 004b 06        		.byte	6
+ 389 004c 06        		.byte	6
+ 390 004d 06        		.byte	6
+ 391 004e 06        		.byte	6
+ 392 004f 06        		.byte	6
+ 393 0050 06        		.byte	6
+ 394 0051 06        		.byte	6
+ 395 0052 06        		.byte	6
+ 396 0053 06        		.byte	6
+ 397 0054 07        		.byte	7
+ 398 0055 07        		.byte	7
+ 399 0056 07        		.byte	7
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 8
+
+
+ 400 0057 07        		.byte	7
+ 401 0058 07        		.byte	7
+ 402 0059 07        		.byte	7
+ 403 005a 07        		.byte	7
+ 404 005b 07        		.byte	7
+ 405 005c 07        		.byte	7
+ 406 005d 07        		.byte	7
+ 407 005e 07        		.byte	7
+ 408 005f 07        		.byte	7
+ 409 0060 08        		.byte	8
+ 410 0061 08        		.byte	8
+ 411 0062 08        		.byte	8
+ 412 0063 08        		.byte	8
+ 413 0064 08        		.byte	8
+ 414 0065 08        		.byte	8
+ 415 0066 08        		.byte	8
+ 416 0067 08        		.byte	8
+ 417 0068 08        		.byte	8
+ 418 0069 08        		.byte	8
+ 419 006a 08        		.byte	8
+ 420 006b 08        		.byte	8
+ 421 006c 09        		.byte	9
+ 422 006d 09        		.byte	9
+ 423 006e 09        		.byte	9
+ 424 006f 09        		.byte	9
+ 425 0070 09        		.byte	9
+ 426 0071 09        		.byte	9
+ 427 0072 09        		.byte	9
+ 428 0073 09        		.byte	9
+ 429 0074 09        		.byte	9
+ 430 0075 09        		.byte	9
+ 431 0076 09        		.byte	9
+ 432 0077 09        		.byte	9
+ 433 0078 0A        		.byte	10
+ 434 0079 0A        		.byte	10
+ 435 007a 0A        		.byte	10
+ 436 007b 0A        		.byte	10
+ 437 007c 0A        		.byte	10
+ 438 007d 0A        		.byte	10
+ 439 007e 0A        		.byte	10
+ 440 007f 0A        		.byte	10
+ 441               		.type	midi_notes, @object
+ 442               		.size	midi_notes, 128
+ 443               	midi_notes:
+ 444 0080 00        		.byte	0
+ 445 0081 15        		.byte	21
+ 446 0082 2A        		.byte	42
+ 447 0083 40        		.byte	64
+ 448 0084 55        		.byte	85
+ 449 0085 6A        		.byte	106
+ 450 0086 80        		.byte	-128
+ 451 0087 95        		.byte	-107
+ 452 0088 AA        		.byte	-86
+ 453 0089 C0        		.byte	-64
+ 454 008a D5        		.byte	-43
+ 455 008b EA        		.byte	-22
+ 456 008c 00        		.byte	0
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 9
+
+
+ 457 008d 15        		.byte	21
+ 458 008e 2A        		.byte	42
+ 459 008f 40        		.byte	64
+ 460 0090 55        		.byte	85
+ 461 0091 6A        		.byte	106
+ 462 0092 80        		.byte	-128
+ 463 0093 95        		.byte	-107
+ 464 0094 AA        		.byte	-86
+ 465 0095 C0        		.byte	-64
+ 466 0096 D5        		.byte	-43
+ 467 0097 EA        		.byte	-22
+ 468 0098 00        		.byte	0
+ 469 0099 15        		.byte	21
+ 470 009a 2A        		.byte	42
+ 471 009b 40        		.byte	64
+ 472 009c 55        		.byte	85
+ 473 009d 6A        		.byte	106
+ 474 009e 80        		.byte	-128
+ 475 009f 95        		.byte	-107
+ 476 00a0 AA        		.byte	-86
+ 477 00a1 C0        		.byte	-64
+ 478 00a2 D5        		.byte	-43
+ 479 00a3 EA        		.byte	-22
+ 480 00a4 00        		.byte	0
+ 481 00a5 15        		.byte	21
+ 482 00a6 2A        		.byte	42
+ 483 00a7 40        		.byte	64
+ 484 00a8 55        		.byte	85
+ 485 00a9 6A        		.byte	106
+ 486 00aa 80        		.byte	-128
+ 487 00ab 95        		.byte	-107
+ 488 00ac AA        		.byte	-86
+ 489 00ad C0        		.byte	-64
+ 490 00ae D5        		.byte	-43
+ 491 00af EA        		.byte	-22
+ 492 00b0 00        		.byte	0
+ 493 00b1 15        		.byte	21
+ 494 00b2 2A        		.byte	42
+ 495 00b3 40        		.byte	64
+ 496 00b4 55        		.byte	85
+ 497 00b5 6A        		.byte	106
+ 498 00b6 80        		.byte	-128
+ 499 00b7 95        		.byte	-107
+ 500 00b8 AA        		.byte	-86
+ 501 00b9 C0        		.byte	-64
+ 502 00ba D5        		.byte	-43
+ 503 00bb EA        		.byte	-22
+ 504 00bc 00        		.byte	0
+ 505 00bd 15        		.byte	21
+ 506 00be 2A        		.byte	42
+ 507 00bf 40        		.byte	64
+ 508 00c0 55        		.byte	85
+ 509 00c1 6A        		.byte	106
+ 510 00c2 80        		.byte	-128
+ 511 00c3 95        		.byte	-107
+ 512 00c4 AA        		.byte	-86
+ 513 00c5 C0        		.byte	-64
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 10
+
+
+ 514 00c6 D5        		.byte	-43
+ 515 00c7 EA        		.byte	-22
+ 516 00c8 00        		.byte	0
+ 517 00c9 15        		.byte	21
+ 518 00ca 2A        		.byte	42
+ 519 00cb 40        		.byte	64
+ 520 00cc 55        		.byte	85
+ 521 00cd 6A        		.byte	106
+ 522 00ce 80        		.byte	-128
+ 523 00cf 95        		.byte	-107
+ 524 00d0 AA        		.byte	-86
+ 525 00d1 C0        		.byte	-64
+ 526 00d2 D5        		.byte	-43
+ 527 00d3 EA        		.byte	-22
+ 528 00d4 00        		.byte	0
+ 529 00d5 15        		.byte	21
+ 530 00d6 2A        		.byte	42
+ 531 00d7 40        		.byte	64
+ 532 00d8 55        		.byte	85
+ 533 00d9 6A        		.byte	106
+ 534 00da 80        		.byte	-128
+ 535 00db 95        		.byte	-107
+ 536 00dc AA        		.byte	-86
+ 537 00dd C0        		.byte	-64
+ 538 00de D5        		.byte	-43
+ 539 00df EA        		.byte	-22
+ 540 00e0 00        		.byte	0
+ 541 00e1 15        		.byte	21
+ 542 00e2 2A        		.byte	42
+ 543 00e3 40        		.byte	64
+ 544 00e4 55        		.byte	85
+ 545 00e5 6A        		.byte	106
+ 546 00e6 80        		.byte	-128
+ 547 00e7 95        		.byte	-107
+ 548 00e8 AA        		.byte	-86
+ 549 00e9 C0        		.byte	-64
+ 550 00ea D5        		.byte	-43
+ 551 00eb EA        		.byte	-22
+ 552 00ec 00        		.byte	0
+ 553 00ed 15        		.byte	21
+ 554 00ee 2A        		.byte	42
+ 555 00ef 40        		.byte	64
+ 556 00f0 55        		.byte	85
+ 557 00f1 6A        		.byte	106
+ 558 00f2 80        		.byte	-128
+ 559 00f3 95        		.byte	-107
+ 560 00f4 AA        		.byte	-86
+ 561 00f5 C0        		.byte	-64
+ 562 00f6 D5        		.byte	-43
+ 563 00f7 EA        		.byte	-22
+ 564 00f8 00        		.byte	0
+ 565 00f9 15        		.byte	21
+ 566 00fa 2A        		.byte	42
+ 567 00fb 40        		.byte	64
+ 568 00fc 55        		.byte	85
+ 569 00fd 6A        		.byte	106
+ 570 00fe 80        		.byte	-128
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 11
+
+
+ 571 00ff 95        		.byte	-107
+ 572               		.local	op_num
+ 573               		.comm	op_num,1,1
+ 574               		.local	channel_num
+ 575               		.comm	channel_num,1,1
+ 576               		.ident	"GCC: (GNU) 4.8.1"
+ 577               	.global __do_clear_bss
+GAS LISTING /var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s 			page 12
+
+
+DEFINED SYMBOLS
+                            *ABS*:00000000 fm_command.c
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:2      *ABS*:0000003e __SP_H__
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:3      *ABS*:0000003d __SP_L__
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:4      *ABS*:0000003f __SREG__
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:5      *ABS*:00000000 __tmp_reg__
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:6      *ABS*:00000001 __zero_reg__
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:10     .text:00000000 FMCommandReceive
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:306    .bss:00000003 scrLine.1728
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:304    .bss:00000002 octave.1730
+                             .bss:00000000 current_byte.1732
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:302    .bss:00000001 bytes_remaining.1731
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:573    .bss:00000006 channel_num
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:308    .bss:00000005 op_num
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:443    .progmem.data:00000080 midi_notes
+/var/folders/fm/1k04nwmx6yz6mpvs7qq8bgjr0000gp/T//ccgeACk3.s:312    .progmem.data:00000000 midi_octaves
+
+UNDEFINED SYMBOLS
+fm_channels
+__do_clear_bss

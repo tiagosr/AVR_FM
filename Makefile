@@ -8,7 +8,7 @@ MCU_TARGET = atmega48
 PROGRAMMER_MCU = m48
 
 # put other files in this line
-PROJSRC = main.c fm_synth.c
+PROJSRC = main.c fm_synth.c fm_command.c
 
 LIBS = 
 INC =
@@ -32,7 +32,8 @@ AVRDUDE = $(AVR_TOOLS_PREFIX)/bin/avrdude
 REMOVE = rm -f
 CFLAGS = -I. $(INC) -Wall -Os -mmcu=$(MCU_TARGET) \
          -fpack-struct -fshort-enums -funsigned-bitfields \
-		 -Wa,-ahlms=$(firstword $(filter %.lst, $(<:.c=.lst)))
+		 -Wa,-ahlms=$(firstword $(filter %.lst, $(<:.c=.lst))) \
+         -DBUILD_FOR_AVR
 ASMFLAGS = -I. $(INC) -mmcu=$(MCU_TARGET) \
            -Wa,-gstabs,-ahlms=$(firstword $(filter %.lst, $(<:.S=.lst)))
 LDFLAGS = -Wl,-Map,$(MAPFILE) -mmcu=$(MCU_TARGET) $(LIBS)
@@ -57,6 +58,9 @@ GENASMFILES = $(filter %s, $(OBJDEPS:.o=.s))
 
 ################ Targets section
 all: $(TARGET)
+
+size:
+    $(SIZE) --format=avr --mcu=$(MCU_TARGET) $(TARGET)
 
 hex: $(HEXTARGET)
 

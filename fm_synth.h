@@ -10,16 +10,24 @@
 #ifndef _fm_synth_H_
 #define _fm_synth_H_
 
-#include <avr/io.h>
 #define FM_OPERATOR_COUNT 4
 #define FM_CHANNEL_COUNT 6
 
 /* Sample rate is 8Mhz/256 */
 #define FM_SAMPLE_RATE 31250
 
+#ifdef BUILD_FOR_AVR
+#include <avr/io.h>
+
 #define FM_OUTPUT_PWM
 #define FM_OUTPUT_LEFT	PB0
 #define FM_OUTPUT_RIGHT	PB1
+
+#else
+
+#include <inttypes.h>
+
+#endif
 
 typedef enum {
 	FMWave_Disabled = 0,
@@ -64,11 +72,12 @@ void FMOperator_Sample(FMOperator *op, int8_t octave, uint8_t note, uint8_t note
 
 typedef struct FM_Channel {
 	FMOperator operators[FM_OPERATOR_COUNT];	// 16*4 = 64
-	int8_t algorithm_octave;	// 1
-	uint8_t note;				// 1 // test if enough resolution. another solution might be a lookup table with values of 2^(x/12)
-	uint8_t note_on;			// 1
-	int8_t panning;				// 1
-} FMChannel;					// = 68
+    unsigned note_on:1;
+    unsigned algorithm:3;
+    unsigned octave:7;          // 1
+	int8_t   panning;           // 1
+	uint8_t  note;				// 1 // index into table of 2^(x/256)-1
+} FMChannel;					// = 67
 
 typedef struct FMSample {
 	int8_t left, right;
@@ -76,11 +85,11 @@ typedef struct FMSample {
 
 FMSample FMChannel_Sample(FMChannel *channel);
 
-extern FMChannel fm_channels[FM_CHANNEL_COUNT];	// 73*6 = 438 bytes =)
+extern FMChannel fm_channels[FM_CHANNEL_COUNT];	// 67*6 = 402 bytes =)
 extern uint8_t fm_master_volume;				// 1
 extern FMSample fm_current_sample;				// 2
 void FMSynth_Sample();
 
-// total data: 441 bytes
+// total data: 405 bytes
 
 #endif //ndef _fm_synth_H_

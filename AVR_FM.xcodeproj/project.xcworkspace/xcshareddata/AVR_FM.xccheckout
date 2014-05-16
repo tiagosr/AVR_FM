@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>5E3AA041-838D-407E-B302-978D6667D299</string>
+	<key>IDESourceControlProjectName</key>
+	<string>AVR_FM</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>DFA68474-6FED-444C-BFC1-C4210926C5D1</key>
+		<string>https://github.com/tiagosr/AVR_FM.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>AVR_FM.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>DFA68474-6FED-444C-BFC1-C4210926C5D1</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/tiagosr/AVR_FM.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>DFA68474-6FED-444C-BFC1-C4210926C5D1</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>DFA68474-6FED-444C-BFC1-C4210926C5D1</string>
+			<key>IDESourceControlWCCName</key>
+			<string>AVR_FM</string>
+		</dict>
+	</array>
+</dict>
+</plist>

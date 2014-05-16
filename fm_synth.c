@@ -8,7 +8,14 @@
  */
 
 #include "fm_synth.h"
+#ifdef BUILD_FOR_AVR
 #include <avr/pgmspace.h>
+#else
+#define PROGMEM  
+static int8_t pgm_read_byte(const void *ptr) {
+    return (*((int8_t*)ptr));
+}
+#endif
 
 FMChannel fm_channels[FM_CHANNEL_COUNT];
 FMSample fm_current_sample;
@@ -18,10 +25,7 @@ uint8_t fm_master_volume;
  * python program used to make the table below:
 
 import math
-sin_table = []
-for x in xrange(256):
-    sin_table += [int(math.sin((x/256.0)*math.pi*2)*128 - 0.5) ,]
-print sin_table
+print [int(math.sin((x/256.0)*math.pi*2)*128 - 0.5) for x in xrange(256)]
 
  */
 static const int8_t sin_table[256] PROGMEM = {
@@ -57,6 +61,74 @@ static const int8_t sin_table[256] PROGMEM = {
 	-71, -68, -66, -63, -60, -58, -55, -52,
 	-49, -46, -43, -40, -37, -34, -31, -28,
 	-25, -22, -19, -16, -13, -9, -6, -3
+};
+
+// [int((math.pow(2, (x/512.0))-1.0)*256) for x in xrange(512)]
+static const uint8_t scale_table[512] PROGMEM = {
+    0, 0, 0, 1, 1, 1, 2, 2,
+    2, 3, 3, 3, 4, 4, 4, 5,
+    5, 5, 6, 6, 7, 7, 7, 8,
+    8, 8, 9, 9, 9, 10, 10, 10,
+    11, 11, 12, 12, 12, 13, 13, 13,
+    14, 14, 14, 15, 15, 16, 16, 16,
+    17, 17, 17, 18, 18, 19, 19, 19,
+    20, 20, 20, 21, 21, 22, 22, 22,
+    23, 23, 23, 24, 24, 25, 25, 25,
+    26, 26, 26, 27, 27, 28, 28, 28,
+    29, 29, 30, 30, 30, 31, 31, 31,
+    32, 32, 33, 33, 33, 34, 34, 35,
+    35, 35, 36, 36, 37, 37, 37, 38,
+    38, 39, 39, 39, 40, 40, 41, 41,
+    41, 42, 42, 43, 43, 43, 44, 44,
+    45, 45, 45, 46, 46, 47, 47, 48,
+    48, 48, 49, 49, 50, 50, 50, 51,
+    51, 52, 52, 53, 53, 53, 54, 54,
+    55, 55, 55, 56, 56, 57, 57, 58,
+    58, 58, 59, 59, 60, 60, 61, 61,
+    61, 62, 62, 63, 63, 64, 64, 64,
+    65, 65, 66, 66, 67, 67, 67, 68,
+    68, 69, 69, 70, 70, 71, 71, 71,
+    72, 72, 73, 73, 74, 74, 75, 75,
+    75, 76, 76, 77, 77, 78, 78, 79,
+    79, 80, 80, 80, 81, 81, 82, 82,
+    83, 83, 84, 84, 85, 85, 86, 86,
+    86, 87, 87, 88, 88, 89, 89, 90,
+    90, 91, 91, 92, 92, 93, 93, 93,
+    94, 94, 95, 95, 96, 96, 97, 97,
+    98, 98, 99, 99, 100, 100, 101, 101,
+    102, 102, 103, 103, 104, 104, 105, 105,
+    106, 106, 107, 107, 108, 108, 108, 109,
+    109, 110, 110, 111, 111, 112, 112, 113,
+    113, 114, 114, 115, 115, 116, 116, 117,
+    117, 118, 119, 119, 120, 120, 121, 121,
+    122, 122, 123, 123, 124, 124, 125, 125,
+    126, 126, 127, 127, 128, 128, 129, 129,
+    130, 130, 131, 131, 132, 132, 133, 134,
+    134, 135, 135, 136, 136, 137, 137, 138,
+    138, 139, 139, 140, 140, 141, 142, 142,
+    143, 143, 144, 144, 145, 145, 146, 146,
+    147, 147, 148, 149, 149, 150, 150, 151,
+    151, 152, 152, 153, 154, 154, 155, 155,
+    156, 156, 157, 157, 158, 159, 159, 160,
+    160, 161, 161, 162, 163, 163, 164, 164,
+    165, 165, 166, 167, 167, 168, 168, 169,
+    169, 170, 171, 171, 172, 172, 173, 173,
+    174, 175, 175, 176, 176, 177, 178, 178,
+    179, 179, 180, 180, 181, 182, 182, 183,
+    183, 184, 185, 185, 186, 186, 187, 188,
+    188, 189, 189, 190, 191, 191, 192, 192,
+    193, 194, 194, 195, 196, 196, 197, 197,
+    198, 199, 199, 200, 200, 201, 202, 202,
+    203, 204, 204, 205, 205, 206, 207, 207,
+    208, 209, 209, 210, 210, 211, 212, 212,
+    213, 214, 214, 215, 216, 216, 217, 217,
+    218, 219, 219, 220, 221, 221, 222, 223,
+    223, 224, 225, 225, 226, 227, 227, 228,
+    229, 229, 230, 230, 231, 232, 232, 233,
+    234, 234, 235, 236, 236, 237, 238, 238,
+    239, 240, 240, 241, 242, 242, 243, 244,
+    245, 245, 246, 247, 247, 248, 249, 249,
+    250, 251, 251, 252, 253, 253, 254, 255
 };
 
 int8_t FMOscillator_Sample(FMOscillator *osc, uint16_t phase)
@@ -151,8 +223,8 @@ void FMOperator_Reset(FMOperator *op)
 }
 void FMOperator_Sample(FMOperator *op, int8_t octave, uint8_t note, uint8_t note_on, int8_t offset)
 {
-    uint8_t envelope_sample = FMEnvelope_Sample(&op->envelope, octave<<8 | note, note_on);
-    uint16_t frequency = ((note+(op->detune_multiplier>>4))*(1<<octave));
+    uint8_t envelope_sample = FMEnvelope_Sample(&op->envelope, octave << 8 | note, note_on);
+    uint16_t frequency = ((pgm_read_byte(&scale_table[note])+(op->detune_multiplier>>4))*(1<<octave));
 	op->phase += frequency * ((op->detune_multiplier & 0xf) + 1);
 
 	uint16_t phase2 = op->phase+((op->offset_influence*offset)>>8);
@@ -342,14 +414,17 @@ FMSample FMChannel_Sample(FMChannel *channel) {
 		j = 0;
 		accum = 0;
 		for (; j<FM_OPERATOR_COUNT; j++) {
-			uint8_t flag = (pgm_read_byte(&(algorithm_configs[channel->algorithm_octave >> 4].stage_map[i]))&(1<<j));
+			uint8_t flag = (pgm_read_byte(&(algorithm_configs[channel->algorithm].stage_map[i]))&(1<<j));
 			if (flag) accum += channel->operators[j].value;
 		}
-		FMOperator_Sample(&(channel->operators[i]), channel->algorithm_octave & 0xf, channel->note, channel->note_on, accum);
+		FMOperator_Sample(&(channel->operators[i]),
+                          channel->octave,
+                          channel->note,
+                          channel->note_on, accum);
 	}
 	accum = 0;
 	for (j=0; j<FM_OPERATOR_COUNT; j++) {
-		uint8_t flag = (pgm_read_byte(&(algorithm_configs[channel->algorithm_octave >> 4].stage_map[i]))&(1<<j));
+		uint8_t flag = (pgm_read_byte(&(algorithm_configs[channel->algorithm].stage_map[i]))&(1<<j));
         if (flag) accum += channel->operators[j].value;
 	}
 	FMSample sample = {accum*vol_left,accum*vol_right};
